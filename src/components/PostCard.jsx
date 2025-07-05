@@ -248,7 +248,7 @@
 // ✅ FINAL FIXED: PostCard.jsx – Prevent like from modifying structure
 import React, { useState } from "react";
 
-const PostCard = ({ post, onReact, onComment }) => {
+const PostCard = ({ post, onComment }) => {
   const [commentText, setCommentText] = useState("");
   const [replyTexts, setReplyTexts] = useState({});
 
@@ -362,7 +362,7 @@ const PostCard = ({ post, onReact, onComment }) => {
               </div>
             </div>
           ) : (
-            <div className="mt-1">{post.content}</div>
+            <div className="mt-1" dangerouslySetInnerHTML={{ __html: post.content }} />
           )}
 
           {post.media && (
