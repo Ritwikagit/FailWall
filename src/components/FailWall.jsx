@@ -1,750 +1,262 @@
-// // import React, { useState } from "react";
-// // import PostCard from "./PostCard";
-// // import EmojiPicker from "emoji-picker-react";
-// // import { CameraIcon, SmileIcon } from "lucide-react";
-// // import { motion } from "framer-motion";
-// // import { toast, ToastContainer } from "react-toastify";
-// // import "react-toastify/dist/ReactToastify.css";
 
-// // const predefinedReactions = [
-// //   { emoji: "👍", label: "Relatable", bg: "bg-yellow-100", text: "text-yellow-700" },
-// //   { emoji: "🧠", label: "Inspired", bg: "bg-indigo-100", text: "text-indigo-700" },
-// //   { emoji: "😅", label: "Funny", bg: "bg-green-100", text: "text-green-700" },
-// //   { emoji: "💖", label: "Support", bg: "bg-pink-100", text: "text-pink-700" },
-// // ];
 
-// // const FailWall = () => {
-// //   const [posts, setPosts] = useState([]);
-// //   const [newPost, setNewPost] = useState("");
-// //   const [media, setMedia] = useState(null);
-// //   const [mediaType, setMediaType] = useState(null);
-// //   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-// //   const [showInterviewForm, setShowInterviewForm] = useState(false);
-// //   const [userReactions, setUserReactions] = useState({});
 
-// //   const [interviewForm, setInterviewForm] = useState({
-// //     name: "Ritwika Maity",
-// //     avatar: "https://i.pravatar.cc/150?u=ritwika",
-// //     interviewTitle: "",
-// //     interviewJourney: "",
-// //     interviewWhy: "",
-// //     interviewPrep: "",
-// //     interviewTip: "",
-// //     interviewApp: "",
-// //     interviewResume: "",
-// //   });
+import React, { useState } from "react";
+import { Trash2 } from "lucide-react";
 
-// //   const handlePost = () => {
-// //     if (newPost.trim() || media) {
-// //       const post = {
-// //         id: Date.now(),
-// //         name: "You",
-// //         avatar: "https://i.pravatar.cc/150?u=you",
-// //         content: newPost,
-// //         timestamp: "Just now",
-// //         reactions: {},
-// //         comments: [],
-// //         media,
-// //         mediaType,
-// //       };
-// //       setPosts([post, ...posts]);
-// //       setNewPost("");
-// //       setMedia(null);
-// //       setMediaType(null);
-// //       setShowEmojiPicker(false);
-// //       toast.success("🎉 Post submitted successfully!");
-// //     }
-// //   };
+const PostCard = ({ post, onReact, onComment, onDelete }) => {
+  const [commentText, setCommentText] = useState("");
+  const [replyTexts, setReplyTexts] = useState({});
 
-// //   const handleMediaChange = (e) => {
-// //     const file = e.target.files[0];
-// //     if (!file) return;
-// //     const reader = new FileReader();
-// //     reader.onloadend = () => {
-// //       setMedia(reader.result);
-// //       setMediaType(file.type.startsWith("video") ? "video" : "image");
-// //     };
-// //     reader.readAsDataURL(file);
-// //   };
+  if (!post || typeof post !== "object") return null;
 
-// //   const handleInterviewSubmit = () => {
-// //     const post = {
-// //       id: Date.now(),
-// //       name: interviewForm.name,
-// //       avatar: interviewForm.avatar,
-// //       timestamp: "Just now",
-// //       isInterview: true,
-// //       ...interviewForm,
-// //       reactions: {},
-// //       comments: [],
-// //     };
-// //     setPosts([post, ...posts]);
-// //     setInterviewForm({
-// //       name: "Ritwika Maity",
-// //       avatar: "https://i.pravatar.cc/150?u=ritwika",
-// //       interviewTitle: "",
-// //       interviewJourney: "",
-// //       interviewWhy: "",
-// //       interviewPrep: "",
-// //       interviewTip: "",
-// //       interviewApp: "",
-// //       interviewResume: "",
-// //     });
-// //     setShowInterviewForm(false);
-// //     toast.success("✅ Interview Experience posted!");
-// //   };
-
-// //   const handleReact = (postId, emoji) => {
-// //     if (userReactions[`${postId}-${emoji}`]) return;
-
-// //     setPosts((prev) =>
-// //       prev.map((post) => {
-// //         if (post.id !== postId) return post;
-// //         const prevCount = post.reactions?.[emoji]?.count || 0;
-// //         return {
-// //           ...post,
-// //           reactions: {
-// //             ...post.reactions,
-// //             [emoji]: {
-// //               count: prevCount + 1,
-// //             },
-// //           },
-// //         };
-// //       })
-// //     );
-// //     setUserReactions((prev) => ({ ...prev, [`${postId}-${emoji}`]: true }));
-// //   };
-
-// //   const handleComment = (postId, updatedComments) => {
-// //     setPosts((prev) =>
-// //       prev.map((post) => (post.id === postId ? { ...post, comments: updatedComments } : post))
-// //     );
-// //   };
-
-// //   const handleEmojiClick = (emojiData) => {
-// //     setNewPost((prev) => prev + emojiData.emoji);
-// //   };
-
-// //   return (
-// //     <div className="bg-gray-100 min-h-screen py-6">
-// //       <ToastContainer position="top-center" autoClose={2000} hideProgressBar theme="light" />
-// //       <div className="max-w-2xl mx-auto p-4">
-// //         <div className="flex justify-between items-center mb-6">
-// //           <h1 className="text-4xl font-extrabold text-blue-600">🚧 Fail Wall 🚧</h1>
-// //         </div>
-
-// //         <div className="flex justify-center mb-4">
-// //           <button
-// //             className={`px-4 py-2 rounded-full text-white font-semibold shadow transition-all duration-300 ${
-// //               showInterviewForm ? "bg-red-500 hover:bg-red-600" : "bg-blue-600 hover:bg-blue-700"
-// //             }`}
-// //             onClick={() => setShowInterviewForm(!showInterviewForm)}
-// //           >
-// //             {showInterviewForm ? "Cancel Interview Post" : "Share Interview Experience"}
-// //           </button>
-// //         </div>
-
-// //         {showInterviewForm && (
-// //           <div className="bg-white p-4 rounded shadow mb-4 space-y-2">
-// //             {[{ label: "Title", key: "interviewTitle" },
-// //               { label: "Journey", key: "interviewJourney" },
-// //               { label: "Why Selected/Rejected", key: "interviewWhy" },
-// //               { label: "Preparation", key: "interviewPrep" },
-// //               { label: "Tip", key: "interviewTip" },
-// //               { label: "Application Process", key: "interviewApp" },
-// //               { label: "Resume Tip", key: "interviewResume" }].map((field) => (
-// //               <div key={field.key}>
-// //                 <label className="font-medium">{field.label}</label>
-// //                 <textarea
-// //                   className="w-full border rounded p-2"
-// //                   rows={2}
-// //                   value={interviewForm[field.key]}
-// //                   onChange={(e) =>
-// //                     setInterviewForm({ ...interviewForm, [field.key]: e.target.value })
-// //                   }
-// //                 />
-// //               </div>
-// //             ))}
-
-// //             <button
-// //               onClick={handleInterviewSubmit}
-// //               className="bg-green-600 text-white px-4 py-2 rounded w-full mt-2 hover:bg-green-700"
-// //             >
-// //               ✅ Submit Interview Experience
-// //             </button>
-// //           </div>
-// //         )}
-
-// //         <div className="mb-4 border rounded p-3 bg-white shadow">
-// //           <textarea
-// //             value={newPost}
-// //             onChange={(e) => setNewPost(e.target.value)}
-// //             placeholder="Share your fail moment..."
-// //             className="w-full h-24 resize-none outline-none border p-2 rounded"
-// //           />
-
-// //           {media && (
-// //             <div className="mt-2">
-// //               {mediaType === "video" ? (
-// //                 <video src={media} controls className="w-full rounded" />
-// //               ) : (
-// //                 <img src={media} alt="preview" className="w-full rounded" />
-// //               )}
-// //             </div>
-// //           )}
-
-// //           <div className="flex items-center justify-between mt-3">
-// //             <div className="flex gap-4 items-center">
-// //               <label className="cursor-pointer">
-// //                 <CameraIcon className="w-5 h-5 text-gray-600 hover:text-black" />
-// //                 <input
-// //                   type="file"
-// //                   accept="image/*,video/*"
-// //                   onChange={handleMediaChange}
-// //                   className="hidden"
-// //                 />
-// //               </label>
-// //               <SmileIcon
-// //                 className="w-5 h-5 text-gray-600 hover:text-black cursor-pointer"
-// //                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-// //               />
-// //             </div>
-// //             <button
-// //               onClick={handlePost}
-// //               className="bg-red-500 text-white px-6 py-1.5 rounded-full font-semibold hover:bg-red-600"
-// //             >
-// //               🚀 Post
-// //             </button>
-// //           </div>
-
-// //           {showEmojiPicker && (
-// //             <div className="z-50 bg-white border rounded shadow-md mt-2">
-// //               <EmojiPicker
-// //                 onEmojiClick={handleEmojiClick}
-// //                 skinTonesDisabled
-// //                 height={300}
-// //                 width={300}
-// //               />
-// //             </div>
-// //           )}
-// //         </div>
-
-// //         <div className="space-y-4">
-// //           {posts.map((post) => (
-// //             <motion.div
-// //               key={post.id}
-// //               initial={{ opacity: 0, y: 20 }}
-// //               animate={{ opacity: 1, y: 0 }}
-// //               transition={{ duration: 0.4 }}
-// //               className="bg-white p-4 rounded shadow"
-// //             >
-// //               <PostCard
-// //                 post={post}
-// //                 onReact={handleReact}
-// //                 onComment={handleComment}
-// //               />
-// //               <div className="mt-3 flex flex-wrap gap-2 text-sm">
-// //                 {predefinedReactions.map((r) => (
-// //                   <button
-// //                     key={r.emoji}
-// //                     onClick={() => handleReact(post.id, r.emoji)}
-// //                     className={`px-3 py-1 rounded-full border ${r.bg} ${r.text} font-medium shadow-sm hover:shadow-md transition-all duration-200 ${
-// //                       userReactions[`${post.id}-${r.emoji}`] ? "opacity-50 cursor-not-allowed" : ""
-// //                     }`}
-// //                   >
-// //                     {r.emoji} {r.label}
-// //                   </button>
-// //                 ))}
-// //               </div>
-// //             </motion.div>
-// //           ))}
-// //         </div>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default FailWall;
-// // ✅ FINAL FIXED: PostCard.jsx – Prevent like from modifying structure
-// import React, { useState } from "react";
-// import PostCard from "./PostCard";
-// import EmojiPicker from "emoji-picker-react";
-// import { CameraIcon, SmileIcon } from "lucide-react";
-// import { motion } from "framer-motion";
-// import { toast, ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-
-// const predefinedReactions = [
-//   { emoji: "👍", label: "Relatable", bg: "bg-yellow-100", text: "text-yellow-700" },
-//   { emoji: "🧠", label: "Inspired", bg: "bg-indigo-100", text: "text-indigo-700" },
-//   { emoji: "😅", label: "Funny", bg: "bg-green-100", text: "text-green-700" },
-//   { emoji: "💖", label: "Support", bg: "bg-pink-100", text: "text-pink-700" },
-// ];
-
-// const FailWall = () => {
-//   const [posts, setPosts] = useState([]);
-//   const [newPost, setNewPost] = useState("");
-//   const [media, setMedia] = useState(null);
-//   const [mediaType, setMediaType] = useState(null);
-//   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-//   const [userReactions, setUserReactions] = useState({});
-
-//   const handlePost = () => {
-//     if (newPost.trim() || media) {
-//       const post = {
-//         id: Date.now(),
-//         name: "You",
-//         avatar: "https://i.pravatar.cc/150?u=you",
-//         content: newPost,
-//         timestamp: "Just now",
-//         reactions: {},
-//         comments: [],
-//         media,
-//         mediaType,
-//       };
-//       setPosts([post, ...posts]);
-//       setNewPost("");
-//       setMedia(null);
-//       setMediaType(null);
-//       setShowEmojiPicker(false);
-//       toast.success("🎉 Post submitted successfully!");
-//     }
-//   };
-
-//   const handleMediaChange = (e) => {
-//     const file = e.target.files[0];
-//     if (!file) return;
-//     const reader = new FileReader();
-//     reader.onloadend = () => {
-//       setMedia(reader.result);
-//       setMediaType(file.type.startsWith("video") ? "video" : "image");
-//     };
-//     reader.readAsDataURL(file);
-//   };
-
-//   const handleReact = (postId, emoji) => {
-//     const userKeyPrefix = `${postId}-`;
-//     if (Object.keys(userReactions).some((key) => key.startsWith(userKeyPrefix))) return;
-
-//     setPosts((prev) =>
-//       prev.map((post) => {
-//         if (post.id !== postId) return post;
-//         const prevCount = post.reactions?.[emoji]?.count || 0;
-//         return {
-//           ...post,
-//           reactions: {
-//             ...post.reactions,
-//             [emoji]: {
-//               count: prevCount + 1,
-//             },
-//           },
-//         };
-//       })
-//     );
-//     setUserReactions((prev) => ({ ...prev, [`${postId}-${emoji}`]: true }));
-//   };
-
-//   const handleComment = (postId, updatedComments) => {
-//     setPosts((prev) =>
-//       prev.map((post) => (post.id === postId ? { ...post, comments: updatedComments } : post))
-//     );
-//   };
-
-//   const handleEmojiClick = (emojiData) => {
-//     setNewPost((prev) => prev + emojiData.emoji);
-//   };
-
-//   return (
-//     <div className="bg-gray-100 min-h-screen py-6">
-//       <ToastContainer position="top-center" autoClose={2000} hideProgressBar theme="light" />
-//       <div className="max-w-2xl mx-auto p-4">
-//         <div className="flex justify-between items-center mb-6">
-//           <h1 className="text-4xl font-extrabold text-blue-600">🚧 Fail Wall 🚧</h1>
-//         </div>
-
-//         <div className="mb-4 border rounded p-3 bg-white shadow">
-//           <textarea
-//             value={newPost}
-//             onChange={(e) => setNewPost(e.target.value)}
-//             placeholder="Share your fail moment..."
-//             className="w-full h-24 resize-none outline-none border p-2 rounded"
-//           />
-
-//           {media && (
-//             <div className="mt-2">
-//               {mediaType === "video" ? (
-//                 <video src={media} controls className="w-full rounded" />
-//               ) : (
-//                 <img src={media} alt="preview" className="w-full rounded" />
-//               )}
-//             </div>
-//           )}
-
-//           <div className="flex items-center justify-between mt-3">
-//             <div className="flex gap-4 items-center">
-//               <label className="cursor-pointer">
-//                 <CameraIcon className="w-5 h-5 text-gray-600 hover:text-black" />
-//                 <input
-//                   type="file"
-//                   accept="image/*,video/*"
-//                   onChange={handleMediaChange}
-//                   className="hidden"
-//                 />
-//               </label>
-//               <SmileIcon
-//                 className="w-5 h-5 text-gray-600 hover:text-black cursor-pointer"
-//                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-//               />
-//             </div>
-//             <button
-//               onClick={handlePost}
-//               className="bg-red-500 text-white px-6 py-1.5 rounded-full font-semibold hover:bg-red-600"
-//             >
-//               🚀 Post
-//             </button>
-//           </div>
-
-//           {showEmojiPicker && (
-//             <div className="z-50 bg-white border rounded shadow-md mt-2">
-//               <EmojiPicker
-//                 onEmojiClick={handleEmojiClick}
-//                 skinTonesDisabled
-//                 height={300}
-//                 width={300}
-//               />
-//             </div>
-//           )}
-//         </div>
-
-//         <div className="space-y-4">
-//           {posts.map((post) => (
-//             <motion.div
-//               key={post.id}
-//               initial={{ opacity: 0, y: 20 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               transition={{ duration: 0.4 }}
-//               className="bg-white p-4 rounded shadow"
-//             >
-//               <PostCard
-//                 post={post}
-//                 onReact={handleReact}
-//                 onComment={handleComment}
-//               />
-//               <div className="mt-3 flex flex-wrap gap-2 text-sm">
-//                 {predefinedReactions.map((r) => (
-//                   <button
-//                     key={r.emoji}
-//                     onClick={() => handleReact(post.id, r.emoji)}
-//                     disabled={Object.keys(userReactions).some((key) => key.startsWith(`${post.id}-`))}
-//                     className={`px-3 py-1 rounded-full border ${r.bg} ${r.text} font-medium shadow-sm hover:shadow-md transition-all duration-200 ${
-//                       userReactions[`${post.id}-${r.emoji}`] ? "opacity-50 cursor-not-allowed" : ""
-//                     }`}
-//                   >
-//                     {r.emoji} {r.label}
-//                   </button>
-//                 ))}
-//               </div>
-//             </motion.div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default FailWall;
-// ✅ FINAL FIXED: PostCard.jsx – Prevent like from modifying structure
-import React, { useState, useRef } from "react";
-import PostCard from "./PostCard";
-import EmojiPicker from "emoji-picker-react";
-import { CameraIcon, SmileIcon } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-const predefinedReactions = [
-  {
-    emoji: "👍",
-    label: "Relatable",
-    bg: "bg-yellow-100",
-    text: "text-yellow-700",
-  },
-  {
-    emoji: "🧠",
-    label: "Inspired",
-    bg: "bg-indigo-100",
-    text: "text-indigo-700",
-  },
-  { emoji: "😅", label: "Funny", bg: "bg-green-100", text: "text-green-700" },
-  { emoji: "💖", label: "Support", bg: "bg-pink-100", text: "text-pink-700" },
-];
-
-const FailWall = () => {
-  const [posts, setPosts] = useState([]);
-  const [newPost, setNewPost] = useState("");
-  const [media, setMedia] = useState(null);
-  const [mediaType, setMediaType] = useState(null);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [userReactions, setUserReactions] = useState({});
-  const [activeFormats, setActiveFormats] = useState({
-    bold: false,
-    italic: false,
-    underline: false,
-  });
-
-  const editorRef = useRef(null);
-
-  const handlePost = () => {
-    if (newPost.trim() || media) {
-      const post = {
+  const handleCommentSubmit = () => {
+    if (commentText.trim()) {
+      const newComment = {
         id: Date.now(),
-        name: "You",
-        avatar: "https://i.pravatar.cc/150?u=you",
-        content: newPost,
-        timestamp: "Just now",
-        reactions: {},
-        comments: [],
-        media,
-        mediaType,
+        author: "You",
+        isAuthor: true,
+        text: commentText,
+        timestamp: new Date().toLocaleTimeString(),
+        replies: [],
+        likes: 0,
       };
-      setPosts([post, ...posts]);
-      setNewPost("");
-      setMedia(null);
-      setMediaType(null);
-      setShowEmojiPicker(false);
-      toast.success("🎉 Post submitted successfully!");
+      const updatedComments = [...(post.comments || []), newComment];
+      onComment(post.id, updatedComments);
+      setCommentText("");
     }
   };
 
-  const handleMediaChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setMedia(reader.result);
-      setMediaType(file.type.startsWith("video") ? "video" : "image");
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleReact = (postId, emoji) => {
-    const existingKey = Object.keys(userReactions).find((key) =>
-      key.startsWith(`${postId}-`)
-    );
-    const previousEmoji = existingKey?.split("-")[1];
-
-    setPosts((prevPosts) =>
-      prevPosts.map((post) => {
-        if (post.id !== postId) return post;
-
-        const updatedReactions = { ...post.reactions };
-        if (previousEmoji === emoji) {
-          updatedReactions[emoji].count = Math.max(
-            (updatedReactions[emoji]?.count || 1) - 1,
-            0
-          );
-          return {
-            ...post,
-            reactions: updatedReactions,
-          };
-        }
-        if (previousEmoji) {
-          updatedReactions[previousEmoji].count = Math.max(
-            (updatedReactions[previousEmoji]?.count || 1) - 1,
-            0
-          );
-        }
-        updatedReactions[emoji] = {
-          count: (updatedReactions[emoji]?.count || 0) + 1,
-        };
-
+  const handleReplySubmit = (commentId) => {
+    const reply = replyTexts[commentId];
+    if (reply && reply.trim()) {
+      const updatedComments = (post.comments || []).map((comment) => {
+        if (comment.id !== commentId) return comment;
         return {
-          ...post,
-          reactions: updatedReactions,
+          ...comment,
+          replies: [
+            ...(comment.replies || []),
+            {
+              id: Date.now(),
+              author: "You",
+              isAuthor: true,
+              text: reply,
+              timestamp: new Date().toLocaleTimeString(),
+              likes: 0,
+            },
+          ],
         };
-      })
-    );
-    setUserReactions((prev) => {
-      const updated = { ...prev };
-      if (previousEmoji === emoji) {
-        delete updated[`${postId}-${emoji}`];
-        return updated;
-      }
-      if (previousEmoji) {
-        delete updated[`${postId}-${previousEmoji}`];
-      }
-
-      updated[`${postId}-${emoji}`] = true;
-      return updated;
-    });
-  };
-
-  const handleComment = (postId, updatedComments) => {
-    setPosts((prev) =>
-      prev.map((post) =>
-        post.id === postId ? { ...post, comments: updatedComments } : post
-      )
-    );
-  };
-
-  const handleEmojiClick = (emojiData) => {
-    if (editorRef.current) {
-      const emoji = emojiData.emoji;
-      document.execCommand("insertText", false, emoji);
-      setNewPost(editorRef.current.innerHTML);
+      });
+      onComment(post.id, updatedComments);
+      setReplyTexts((prev) => ({ ...prev, [commentId]: "" }));
     }
   };
 
-  const formatText = (command) => {
-    document.execCommand(command, false, null);
-    setNewPost(editorRef.current.innerHTML);
-    setActiveFormats((prev) => ({ ...prev, [command]: !prev[command] }));
+  const handleLike = (commentId, isReply = false, replyId = null) => {
+    const updatedComments = (post.comments || []).map((comment) => {
+      if (comment.id !== commentId) return comment;
+      if (!isReply) {
+        return {
+          ...comment,
+          likes: (comment.likes || 0) + 1,
+        };
+      } else {
+        return {
+          ...comment,
+          replies: (comment.replies || []).map((reply) => {
+            if (reply.id !== replyId) return reply;
+            return {
+              ...reply,
+              likes: (reply.likes || 0) + 1,
+            };
+          }),
+        };
+      }
+    });
+    onComment(post.id, updatedComments);
+  };
+
+  const handleDeleteComment = (commentId) => {
+    const updatedComments = (post.comments || []).filter((c) => c.id !== commentId);
+    onComment(post.id, updatedComments);
+  };
+
+  const handleDeleteReply = (commentId, replyId) => {
+    const updatedComments = (post.comments || []).map((c) => {
+      if (c.id !== commentId) return c;
+      return {
+        ...c,
+        replies: c.replies.filter((r) => r.id !== replyId),
+      };
+    });
+    onComment(post.id, updatedComments);
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-6">
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar
-        theme="light"
-      />
-      <div className="max-w-2xl mx-auto p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-extrabold text-blue-600">
-            🚧 Fail Wall 🚧
-          </h1>
-        </div>
-
-        <div className="mb-4 border rounded p-3 bg-white shadow">
-          <div className="flex gap-2 mb-2">
-            <button
-              onClick={() => formatText("bold")}
-              className={`border px-3 py-1 font-bold rounded ${
-                activeFormats.bold ? "bg-gray-300" : ""
-              }`}
-            >
-              B
-            </button>
-            <button
-              onClick={() => formatText("italic")}
-              className={`border px-3 py-1 italic rounded ${
-                activeFormats.italic ? "bg-gray-300" : ""
-              }`}
-            >
-              I
-            </button>
-            <button
-              onClick={() => formatText("underline")}
-              className={`border px-3 py-1 underline rounded ${
-                activeFormats.underline ? "bg-gray-300" : ""
-              }`}
-            >
-              U
-            </button>
+    <div className="bg-white p-4 rounded shadow space-y-2">
+      <div className="flex items-start space-x-3">
+        <img src={post.avatar} alt="avatar" className="w-10 h-10 rounded-full" />
+        <div className="w-full">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="font-semibold">{post.name}</div>
+              <div className="text-gray-500 text-sm">{post.timestamp}</div>
+            </div>
+            {post.name === "You" && (
+              <button
+                onClick={() => onDelete && onDelete(post.id)}
+                className="text-red-500 text-sm hover:underline flex items-center gap-1"
+              >
+                <Trash2 className="w-4 h-4" /> Delete
+              </button>
+            )}
           </div>
-
-          <div
-            contentEditable
-            ref={editorRef}
-            dir="ltr"
-            className="w-full h-24 p-2 border rounded outline-none text-left overflow-y-auto"
-            onInput={(e) => setNewPost(e.currentTarget.innerHTML)}
-            style={{ direction: "ltr", unicodeBidi: "plaintext" }}
-          ></div>
-
-          {media && (
+          {post.isInterview ? (
+            <div className="mt-2 space-y-2">{/* interview content */}</div>
+          ) : (
+            <div className="mt-1" dangerouslySetInnerHTML={{ __html: post.content }} />
+          )}
+          {post.media && (
             <div className="mt-2">
-              {mediaType === "video" ? (
-                <video src={media} controls className="w-full rounded" />
+              {post.mediaType === "video" ? (
+                <video src={post.media} controls className="w-full rounded" />
               ) : (
-                <img src={media} alt="preview" className="w-full rounded" />
+                <img src={post.media} alt="media" className="w-full rounded" />
               )}
             </div>
           )}
-
-          <div className="flex items-center justify-between mt-3">
-            <div className="flex gap-4 items-center">
-              <label className="cursor-pointer">
-                <CameraIcon className="w-5 h-5 text-gray-600 hover:text-black" />
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  onChange={handleMediaChange}
-                  className="hidden"
-                />
-              </label>
-              <SmileIcon
-                className="w-5 h-5 text-gray-600 hover:text-black cursor-pointer"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              />
-            </div>
-            <button
-              onClick={handlePost}
-              className="bg-red-500 text-white px-6 py-1.5 rounded-full font-semibold hover:bg-red-600"
-            >
-              🚀 Post
-            </button>
-          </div>
-
-          {showEmojiPicker && (
-            <div className="z-50 bg-white border rounded shadow-md mt-2">
-              <EmojiPicker
-                onEmojiClick={handleEmojiClick}
-                skinTonesDisabled
-                height={300}
-                width={300}
-              />
-            </div>
-          )}
         </div>
+      </div>
 
-        <div className="space-y-4">
-          {posts.map((post) => {
-            // 👇 Place this here, inside the post loop
-            const currentEmojiKey = Object.keys(userReactions).find((key) =>
-              key.startsWith(`${post.id}-`)
-            );
-            const currentEmoji = currentEmojiKey?.split("-")[1];
+      <div className="flex flex-wrap gap-2 text-sm mt-2">
+        {post.reactions &&
+          Object.entries(post.reactions).map(([emoji, data]) => (
+            <span key={emoji} className="bg-gray-100 px-2 py-1 rounded">
+              {emoji} {data.count}
+            </span>
+          ))}
+      </div>
 
-            return (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="bg-white p-4 rounded shadow"
-              >
-                <PostCard
-                  post={post}
-                  onReact={handleReact}
-                  onComment={handleComment}
-                />
-                <div className="mt-3 flex flex-wrap gap-2 text-sm">
-                  {predefinedReactions.map((r) => {
-                    const isCurrent = currentEmoji === r.emoji;
+      <div className="mt-3 flex space-x-2">
+        <input
+          type="text"
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
+          placeholder="Write a comment..."
+          className="flex-1 border rounded px-3 py-1"
+        />
+        <button
+          onClick={handleCommentSubmit}
+          className="bg-blue-500 text-white px-3 py-1 rounded"
+        >
+          Comment
+        </button>
+      </div>
 
-                    return (
-                      <button
-                        key={r.emoji}
-                        onClick={() => handleReact(post.id, r.emoji)}
-                        className={`px-3 py-1 rounded-full border ${r.bg} ${
-                          r.text
-                        } font-medium shadow-sm hover:shadow-md transition-all duration-200 ${
-                          isCurrent ? "ring-2 ring-offset-1 ring-black/50" : ""
-                        }`}
+      <div className="mt-2 space-y-2">
+        {(post.comments || []).map((comment) => (
+          <div key={comment.id} className="pl-4 border-l">
+            <div className="flex items-start space-x-2">
+              <img
+                src="https://i.pravatar.cc/40?u=comment"
+                alt="avatar"
+                className="w-8 h-8 rounded-full"
+              />
+              <div className="w-full">
+                <div className="flex justify-between">
+                  <div>
+                    <div className="text-sm font-semibold flex items-center">
+                      {comment.author}
+                      {comment.isAuthor && (
+                        <span className="ml-2 text-xs bg-gray-200 px-1 rounded">
+                          Author
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-sm">{comment.text}</div>
+                    <div className="text-xs text-gray-500 flex space-x-4 mt-1">
+                      <span>{comment.timestamp}</span>
+                      <span
+                        className="cursor-pointer hover:underline"
+                        onClick={() => handleLike(comment.id)}
                       >
-                        {r.emoji} {r.label}
-                      </button>
-                    );
-                  })}
+                        Like ({comment.likes || 0})
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="text-xs text-red-500 hover:underline"
+                  >
+                    <Trash2 className="w-4 h-4 inline" /> Delete
+                  </button>
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
+
+                <div className="mt-1 flex space-x-2">
+                  <input
+                    type="text"
+                    value={replyTexts[comment.id] || ""}
+                    onChange={(e) =>
+                      setReplyTexts({ ...replyTexts, [comment.id]: e.target.value })
+                    }
+                    placeholder="Write a reply..."
+                    className="border rounded px-2 py-1 text-sm"
+                  />
+                  <button
+                    onClick={() => handleReplySubmit(comment.id)}
+                    className="text-blue-500 text-sm"
+                  >
+                    Reply
+                  </button>
+                </div>
+
+                {(comment.replies || []).map((reply) => (
+                  <div key={reply.id} className="mt-2 pl-6 flex items-start space-x-2">
+                    <img
+                      src="https://i.pravatar.cc/40?u=reply"
+                      alt="avatar"
+                      className="w-7 h-7 rounded-full"
+                    />
+                    <div className="w-full">
+                      <div className="flex justify-between">
+                        <div>
+                          <div className="text-sm font-semibold flex items-center">
+                            <span className="text-blue-600">{reply.author}</span>
+                            {reply.isAuthor && (
+                              <span className="ml-2 text-xs bg-gray-200 px-1 rounded">
+                                Author
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-sm">{reply.text}</div>
+                          <div className="text-xs text-gray-500 flex space-x-4 mt-1">
+                            <span>{reply.timestamp}</span>
+                            <span
+                              className="cursor-pointer hover:underline"
+                              onClick={() => handleLike(comment.id, true, reply.id)}
+                            >
+                              Like ({reply.likes || 0})
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteReply(comment.id, reply.id)}
+                          className="text-xs text-red-500 hover:underline"
+                        >
+                          <Trash2 className="w-4 h-4 inline" /> Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default FailWall;
+export default PostCard;
+
